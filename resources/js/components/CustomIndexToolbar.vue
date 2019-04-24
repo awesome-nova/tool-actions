@@ -1,29 +1,33 @@
 <template>
-    <div class="flex w-full justify-end items-center mx-3">
+    <component :is="component" :resource-name="resourceName">
         <button v-for="action in actions"
-           :key="action.uriKey" class="btn btn-default btn-primary" @click.prevent="determineActionStrategy(action.uriKey)">{{action.label}}</button>
+                :key="action.uriKey" class="btn btn-default btn-primary"
+                @click.prevent="determineActionStrategy(action.uriKey)">{{action.label}}
+        </button>
         <transition name="fade">
             <component
-                :is="selectedAction.component"
-                :working="working"
-                v-if="confirmActionModalOpened"
-                selected-resources="all"
-                :resource-name="resourceName"
-                :action="selectedAction"
-                :errors="errors"
-                @confirm="executeAction"
-                @close="confirmActionModalOpened = false"
+                    :is="selectedAction.component"
+                    :working="working"
+                    v-if="confirmActionModalOpened"
+                    selected-resources="all"
+                    :resource-name="resourceName"
+                    :action="selectedAction"
+                    :errors="errors"
+                    @confirm="executeAction"
+                    @close="confirmActionModalOpened = false"
             />
         </transition>
-    </div>
+    </component>
 </template>
 
 <script>
 import { Errors } from 'form-backend-validation'
-import  InteractsWithResourceInformation  from 'laravel-nova/src/mixins/InteractsWithResourceInformation'
+import InteractsWithResourceInformation from 'laravel-nova/src/mixins/InteractsWithResourceInformation'
+import DefaultIndexToolbar from './DefaultIndexToolbar'
 
 export default {
     mixins: [InteractsWithResourceInformation],
+    components: {DefaultIndexToolbar},
     props: {
         resourceName: String,
         queryString: {
@@ -183,6 +187,9 @@ export default {
                 action: this.selectedActionKey,
             }
         },
+        component() {
+            return this.resourceInformation.toolbarView || 'default-index-toolbar';
+        }
     }
 }
 </script>
